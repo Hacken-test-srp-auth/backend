@@ -11,13 +11,22 @@ export class UserService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
   ) {}
-  create(createUserDto: CreateUserDto) {
-    const dto = createUserDto;
-    return 'This action adds a new user' + dto;
+  async create(createUserDto: CreateUserDto) {
+    const user = this.userRepository.create(createUserDto);
+
+    return this.userRepository.save(user);
   }
 
   findAll() {
     return this.userRepository.find();
+  }
+
+  findByEmail(email: string) {
+    return this.userRepository.findOne({
+      where: {
+        email,
+      },
+    });
   }
 
   findOne(id: number) {
