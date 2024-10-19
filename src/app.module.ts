@@ -7,6 +7,7 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from './jwt/jwt.module';
 import { ProfileModule } from './profile/profile.module';
+import { RedisModule } from './redis/redis.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { ProfileModule } from './profile/profile.module';
     AuthModule,
     JwtModule,
     ProfileModule,
+    RedisModule,
   ],
   controllers: [AppController],
   providers: [AppService],

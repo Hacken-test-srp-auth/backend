@@ -31,14 +31,14 @@ export class AuthService {
   async register(registerDto: RegisterDto) {
     const { username, name, salt, email, verifier } = registerDto;
 
-    const user = await this.userService.findByEmail(email);
-    if (user) {
+    const ifUserExists = await this.userService.findByEmail(email);
+    if (ifUserExists) {
       throw new ConflictException(
         `User with this email: ${email} already exist`,
       );
     }
 
-    this.userService.create({
+    const user = await this.userService.create({
       username,
       name,
       salt,
@@ -136,6 +136,10 @@ export class AuthService {
     } finally {
       this.sessionMap.delete(email);
     }
+  }
+
+  async logout(accessToken: string, refreshToken: string): Promise<void> {
+    await this.jwtService.invalidateTokens(accessToken, refreshToken);
   }
 
   private modPow(base: bigint, exponent: bigint, modulus: bigint): bigint {

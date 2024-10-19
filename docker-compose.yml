@@ -14,5 +14,15 @@ services:
     profiles:
       - development
 
+  redis:
+    image: redis:alpine
+    ports:
+      - '${REDIS_SESSION_PORT}:6379'
+    volumes:
+      - redis_data:/data
+    profiles:
+      - development
+
 volumes:
   postgres_data:
+  redis_data:
