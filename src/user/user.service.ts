@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
+import { UpdateProfileDto } from 'src/profile/dto/update-profile.dto';
 
 @Injectable()
 export class UserService {
@@ -29,16 +29,20 @@ export class UserService {
     });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findById(id: string): Promise<User> {
+    console.log('im here ==> ');
+    const user = await this.userRepository.findOne({
+      where: { id },
+      select: ['id', 'username', 'email', 'name', 'createdAt', 'updatedAt'],
+    });
+    if (!user) {
+      throw new NotFoundException(`User with ID "${id}" not found`);
+    }
+    return user;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    const dto = updateUserDto;
-    return `This action updates a #${id} user ${dto}`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async update(id: string, updateProfileDto: UpdateProfileDto): Promise<User> {
+    await this.userRepository.update(id, updateProfileDto);
+    return this.findById(id);
   }
 }

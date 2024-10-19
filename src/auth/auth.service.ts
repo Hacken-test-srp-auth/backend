@@ -9,6 +9,7 @@ import { UserService } from 'src/user/user.service';
 import { RegisterDto } from './dto/register.dto';
 import { CompleteLoginDto } from './dto/complete-login.dto';
 import { ethers } from 'ethers';
+import { JwtService } from 'src/jwt/jwt.service';
 
 interface ServerSession {
   serverPrivateKey: bigint;
@@ -22,12 +23,14 @@ export class AuthService {
   private readonly k = ethers.toBigInt(process.env.k);
 
   private readonly sessionMap: Map<string, ServerSession> = new Map();
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private jwtService: JwtService,
+  ) {}
 
   async register(registerDto: RegisterDto) {
     const { username, name, salt, email, verifier } = registerDto;
 
-    // check if user exists;
     const user = await this.userService.findByEmail(email);
     if (user) {
       throw new ConflictException(
@@ -35,13 +38,15 @@ export class AuthService {
       );
     }
 
-    return this.userService.create({
+    this.userService.create({
       username,
       name,
       salt,
       email,
       verifier,
     });
+
+    return await this.jwtService.createTokens(user.id);
   }
 
   async loginInit(email: string) {
@@ -123,9 +128,8 @@ export class AuthService {
         ]),
       );
 
-      const payload = { sub: user.id, email: user.email, M2: M2 };
-
-      return payload;
+      const tokens = await this.jwtService.createTokens(user.id);
+      return { ...tokens, M2: M2 };
     } catch (error) {
       console.log(error);
       throw new UnauthorizedException(error);
