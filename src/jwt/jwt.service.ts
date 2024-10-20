@@ -2,7 +2,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { JwtService as NestJwtService } from '@nestjs/jwt';
 import Redis from 'ioredis';
-import { REDIS_BLACKLIST_CLIENT } from 'src/redis/redis.module';
+import { REDIS_INVALID_TOKENS } from 'src/redis/redis.module';
 
 @Injectable()
 export class JwtService {
@@ -15,7 +15,7 @@ export class JwtService {
 
   constructor(
     private nestJwtService: NestJwtService,
-    @Inject(REDIS_BLACKLIST_CLIENT)
+    @Inject(REDIS_INVALID_TOKENS)
     private readonly redisInvalidTokens: Redis,
   ) {}
 

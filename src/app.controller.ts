@@ -1,7 +1,6 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { AppService } from './app.service';
-import { JwtAuthGuard } from './lib/decorators/guards/jwt.guard';
-import { GetUserId } from './lib/decorators/guards/get-user-id.decorator';
+import { JwtAuthGuard } from './lib/guards/jwt.guard';
 
 @Controller()
 export class AppController {
@@ -9,8 +8,7 @@ export class AppController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  getHello(@GetUserId() userId: string) {
-    console.log('========>', userId);
+  getHello() {
     return this.appService.getHello();
   }
 }

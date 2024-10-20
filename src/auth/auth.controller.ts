@@ -10,7 +10,7 @@ import {
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { CompleteLoginDto } from './dto/complete-login.dto';
-import { JwtAuthGuard } from 'src/lib/decorators/guards/jwt.guard';
+import { JwtAuthGuard } from 'src/lib/guards/jwt.guard';
 import { Request } from 'express';
 
 @Controller('auth')

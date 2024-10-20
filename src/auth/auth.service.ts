@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  Inject,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -10,10 +11,14 @@ import { RegisterDto } from './dto/register.dto';
 import { CompleteLoginDto } from './dto/complete-login.dto';
 import { ethers } from 'ethers';
 import { JwtService } from 'src/jwt/jwt.service';
+import Redis from 'ioredis';
+import { REDIS_LOGIN_STORAGE } from 'src/redis/redis.module';
+import { User } from 'src/user/entities/user.entity';
 
 interface ServerSession {
-  serverPrivateKey: bigint;
-  serverPublicKey: bigint;
+  serverPrivateKey: string;
+  serverPublicKey: string;
+  user: User;
 }
 
 @Injectable()
@@ -22,10 +27,11 @@ export class AuthService {
   private readonly g = ethers.toBigInt(process.env.g);
   private readonly k = ethers.toBigInt(process.env.k);
 
-  private readonly sessionMap: Map<string, ServerSession> = new Map();
   constructor(
     private userService: UserService,
     private jwtService: JwtService,
+    @Inject(REDIS_LOGIN_STORAGE)
+    private readonly redisLoginStorage: Redis,
   ) {}
 
   async register(registerDto: RegisterDto) {
@@ -63,7 +69,18 @@ export class AuthService {
     const serverPublicKey =
       (this.k * v + this.modPow(this.g, serverPrivateKey, this.N)) % this.N;
 
-    this.sessionMap.set(email, { serverPrivateKey, serverPublicKey });
+    const loginProcessSession: ServerSession = {
+      serverPrivateKey: serverPrivateKey.toString(),
+      serverPublicKey: serverPublicKey.toString(),
+      user,
+    };
+
+    await this.redisLoginStorage.set(
+      `session:${email}`,
+      JSON.stringify(loginProcessSession),
+      'EX',
+      60,
+    );
 
     return {
       salt: user.salt,
@@ -75,15 +92,18 @@ export class AuthService {
     const { email, clientPublicKey, clientProof } = completeLoginDto;
 
     try {
-      const session = this.sessionMap.get(email);
+      const session = JSON.parse(
+        await this.redisLoginStorage.get(`session:${email}`),
+      );
       if (!session) {
         throw new NotFoundException('Login session not found');
       }
 
-      const { serverPrivateKey, serverPublicKey } = session;
+      const serverPrivateKey = BigInt(session.serverPrivateKey);
+      const serverPublicKey = BigInt(session.serverPublicKey);
+      const { user } = session;
 
       const M1 = clientProof;
-
       const A = ethers.toBigInt(clientPublicKey);
 
       if (A % this.N === 0n) {
@@ -99,13 +119,11 @@ export class AuthService {
         ),
       );
 
-      const user = await this.userService.findByEmail(email);
-
       const base =
         (A * this.modPow(ethers.toBigInt(`0x${user.verifier}`), u, this.N)) %
         this.N;
 
-      const S = this.modPow(base, serverPrivateKey, this.N);
+      const S = this.modPow(base, ethers.toBigInt(serverPrivateKey), this.N);
       const K = ethers.keccak256(ethers.toBeArray(S));
 
       const expectedM1 = ethers.keccak256(
@@ -134,7 +152,7 @@ export class AuthService {
       console.log(error);
       throw new UnauthorizedException(error);
     } finally {
-      this.sessionMap.delete(email);
+      await this.redisLoginStorage.del(`session:${email}`);
     }
   }
 

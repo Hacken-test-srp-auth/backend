@@ -30,7 +30,6 @@ export class UserService {
   }
 
   async findById(id: string): Promise<User> {
-    console.log('im here ==> ');
     const user = await this.userRepository.findOne({
       where: { id },
       select: ['id', 'username', 'email', 'name', 'createdAt', 'updatedAt'],
