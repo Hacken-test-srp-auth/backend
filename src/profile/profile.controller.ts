@@ -10,9 +10,9 @@ import {
 
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { ProfileDto } from './dto/profile.dto';
-import { JwtAuthGuard } from 'src/lib/guards/jwt.guard';
-import { UserService } from 'src/user/user.service';
-import { GetUserId } from 'src/lib/decorators/get-user-id.decorator';
+import { JwtAuthGuard } from '../lib/guards/jwt.guard';
+import { UserService } from '../user/user.service';
+import { GetUserId } from '../lib/decorators/get-user-id.decorator';
 
 @Controller('profile')
 @UseGuards(JwtAuthGuard)

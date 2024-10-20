@@ -17,14 +17,18 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json",
     "prepare": "husky",
     "typeorm": "dotenv -e environments/.env.local -- typeorm-ts-node-commonjs",
     "migration:generate": "yarn run typeorm migration:generate -- -d src/db/data-source.ts",
     "migration:create": "yarn run typeorm migration:create src/db/migrations",
     "migration:run": "yarn run typeorm migration:run -- -d src/db/data-source.ts",
     "services:up": "docker-compose --env-file ./environments/.env.local --profile development up -d",
-    "services:down": "docker-compose --env-file ./environments/.env.local --profile development down"
+    "services:down": "docker-compose --env-file ./environments/.env.local --profile development down",
+    "pretest:e2e": "yarn run test:e2e:services:up",
+    "test:e2e": "ENV_FILE_PATH=./environments/.env.e2e jest --config ./test/jest-e2e.json --runInBand --forceExit --verbose || yarn run test:e2e:services:down",
+    "posttest:e2e": "yarn run test:e2e:services:down",
+    "test:e2e:services:up": "docker-compose -f docker-compose.test.yml --env-file ./environments/.env.e2e up -d",
+    "test:e2e:services:down": "docker-compose -f docker-compose.test.yml --env-file ./environments/.env.e2e down"
   },
   "dependencies": {
     "@nestjs/common": "^10.4.4",
@@ -52,7 +56,7 @@
   "devDependencies": {
     "@nestjs/cli": "^10.4.5",
     "@nestjs/schematics": "^10.1.4",
-    "@nestjs/testing": "^9.0.0",
+    "@nestjs/testing": "^10.4.5",
     "@types/express": "^5.0.0",
     "@types/ioredis": "^5.0.0",
     "@types/jest": "^29.5.13",

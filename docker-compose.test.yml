@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  postgres_test:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "${DB_PORT}:5432"
+
+  redis_test:
+    image: redis:alpine
+    ports:
+      - '${REDIS_SESSION_PORT}:6379'

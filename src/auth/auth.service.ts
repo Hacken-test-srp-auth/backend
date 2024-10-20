@@ -6,14 +6,14 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 
-import { UserService } from 'src/user/user.service';
+import { UserService } from '../user/user.service';
 import { RegisterDto } from './dto/register.dto';
 import { CompleteLoginDto } from './dto/complete-login.dto';
 import { ethers } from 'ethers';
-import { JwtService } from 'src/jwt/jwt.service';
+import { JwtService } from '../jwt/jwt.service';
 import Redis from 'ioredis';
-import { REDIS_LOGIN_STORAGE } from 'src/redis/redis.module';
-import { User } from 'src/user/entities/user.entity';
+import { REDIS_LOGIN_STORAGE } from '../redis/redis.module';
+import { User } from '../user/entities/user.entity';
 
 interface ServerSession {
   serverPrivateKey: string;

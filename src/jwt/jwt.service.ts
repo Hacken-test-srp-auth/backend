@@ -2,7 +2,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { JwtService as NestJwtService } from '@nestjs/jwt';
 import Redis from 'ioredis';
-import { REDIS_INVALID_TOKENS } from 'src/redis/redis.module';
+import { REDIS_INVALID_TOKENS } from '../redis/redis.module';
 
 @Injectable()
 export class JwtService {
