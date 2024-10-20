@@ -1,14 +1,14 @@
 import { Global, Module } from '@nestjs/common';
 import Redis from 'ioredis';
 
-export const REDIS_SESSION_CLIENT = 'REDIS_SESSION_CLIENT';
-export const REDIS_BLACKLIST_CLIENT = 'REDIS_BLACKLIST_CLIENT';
+export const REDIS_LOGIN_STORAGE = 'REDIS_LOGIN_STORAGE';
+export const REDIS_INVALID_TOKENS = 'REDIS_INVALID_TOKENS';
 
 @Global()
 @Module({
   providers: [
     {
-      provide: REDIS_SESSION_CLIENT,
+      provide: REDIS_LOGIN_STORAGE,
       useFactory: () => {
         const redisClient = new Redis({
           host: process.env.REDIS_SESSION_HOST,
@@ -24,7 +24,7 @@ export const REDIS_BLACKLIST_CLIENT = 'REDIS_BLACKLIST_CLIENT';
       },
     },
     {
-      provide: REDIS_BLACKLIST_CLIENT,
+      provide: REDIS_INVALID_TOKENS,
       useFactory: () => {
         const redisClient = new Redis({
           host: process.env.REDIS_BLACKLIST_HOST,
@@ -40,6 +40,6 @@ export const REDIS_BLACKLIST_CLIENT = 'REDIS_BLACKLIST_CLIENT';
       },
     },
   ],
-  exports: [REDIS_SESSION_CLIENT, REDIS_BLACKLIST_CLIENT],
+  exports: [REDIS_LOGIN_STORAGE, REDIS_INVALID_TOKENS],
 })
 export class RedisModule {}
