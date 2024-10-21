@@ -9,11 +9,11 @@ import {
 import { UserService } from '../user/user.service';
 import { RegisterDto } from './dto/register.dto';
 import { CompleteLoginDto } from './dto/complete-login.dto';
-import { ethers } from 'ethers';
 import { JwtService } from '../jwt/jwt.service';
 import Redis from 'ioredis';
 import { REDIS_LOGIN_STORAGE } from '../redis/redis.module';
 import { User } from '../user/entities/user.entity';
+import { SrpService } from '../srp/srp.service';
 
 interface ServerSession {
   serverPrivateKey: string;
@@ -23,13 +23,11 @@ interface ServerSession {
 
 @Injectable()
 export class AuthService {
-  private readonly N = ethers.toBigInt(process.env.N);
-  private readonly g = ethers.toBigInt(process.env.g);
-  private readonly k = ethers.toBigInt(process.env.k);
-
+  private LOGIN_STORAGE_TTL = 60;
   constructor(
     private userService: UserService,
     private jwtService: JwtService,
+    private srpService: SrpService,
     @Inject(REDIS_LOGIN_STORAGE)
     private readonly redisLoginStorage: Redis,
   ) {}
@@ -64,10 +62,8 @@ export class AuthService {
       );
     }
 
-    const serverPrivateKey = ethers.toBigInt(ethers.randomBytes(32));
-    const v = ethers.toBigInt(`0x${user.verifier}`);
-    const serverPublicKey =
-      (this.k * v + this.modPow(this.g, serverPrivateKey, this.N)) % this.N;
+    const { serverPrivateKey, serverPublicKey } =
+      this.srpService.generateServerCredentials(user.verifier);
 
     const loginProcessSession: ServerSession = {
       serverPrivateKey: serverPrivateKey.toString(),
@@ -79,9 +75,8 @@ export class AuthService {
       `session:${email}`,
       JSON.stringify(loginProcessSession),
       'EX',
-      60,
+      this.LOGIN_STORAGE_TTL,
     );
-
     return {
       salt: user.salt,
       serverPublicKey: serverPublicKey.toString(16),
@@ -99,52 +94,19 @@ export class AuthService {
         throw new NotFoundException('Login session not found');
       }
 
-      const serverPrivateKey = BigInt(session.serverPrivateKey);
-      const serverPublicKey = BigInt(session.serverPublicKey);
-      const { user } = session;
+      const { serverPrivateKey, serverPublicKey, user } = session;
 
-      const M1 = clientProof;
-      const A = ethers.toBigInt(clientPublicKey);
-
-      if (A % this.N === 0n) {
-        throw new UnauthorizedException('Invalid client public key');
-      }
-
-      const u = ethers.toBigInt(
-        ethers.keccak256(
-          ethers.concat([
-            ethers.toBeArray(A), // client public key
-            ethers.toBeArray(serverPublicKey), // server public key
-          ]),
-        ),
+      const { isValid, M2 } = this.srpService.verifyLogin(
+        clientPublicKey,
+        clientProof,
+        serverPrivateKey,
+        serverPublicKey,
+        user.verifier,
       );
 
-      const base =
-        (A * this.modPow(ethers.toBigInt(`0x${user.verifier}`), u, this.N)) %
-        this.N;
-
-      const S = this.modPow(base, ethers.toBigInt(serverPrivateKey), this.N);
-      const K = ethers.keccak256(ethers.toBeArray(S));
-
-      const expectedM1 = ethers.keccak256(
-        ethers.concat([
-          ethers.toBeArray(A),
-          ethers.toBeArray(serverPublicKey),
-          K,
-        ]),
-      );
-
-      if (M1 !== ethers.hexlify(expectedM1)) {
+      if (!isValid) {
         throw new UnauthorizedException('Invalid client proof');
       }
-
-      const M2 = ethers.keccak256(
-        ethers.concat([
-          ethers.toBeArray(A),
-          ethers.toBeArray(ethers.toBigInt(M1)),
-          K,
-        ]),
-      );
 
       const tokens = await this.jwtService.createTokens(user.id);
       return { ...tokens, M2: M2 };
@@ -158,18 +120,5 @@ export class AuthService {
 
   async logout(accessToken: string, refreshToken: string): Promise<void> {
     await this.jwtService.invalidateTokens(accessToken, refreshToken);
-  }
-
-  private modPow(base: bigint, exponent: bigint, modulus: bigint): bigint {
-    let result = 1n;
-    base = base % modulus;
-    while (exponent > 0n) {
-      if (exponent % 2n === 1n) {
-        result = (result * base) % modulus;
-      }
-      exponent = exponent / 2n;
-      base = (base * base) % modulus;
-    }
-    return result;
   }
 }

@@ -9,6 +9,7 @@ import { JwtModule } from './jwt/jwt.module';
 import { ProfileModule } from './profile/profile.module';
 import { RedisModule } from './redis/redis.module';
 import { ConfigModule } from '@nestjs/config';
+import { SrpModule } from './srp/srp.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { ConfigModule } from '@nestjs/config';
     JwtModule,
     ProfileModule,
     RedisModule,
+    SrpModule,
   ],
   controllers: [AppController],
   providers: [AppService],
