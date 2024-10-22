@@ -91,9 +91,9 @@ describe('Authentication (e2e)', () => {
       });
 
     console.log(
-      '===================== 2',
+      '===================== 3',
       loginCompleteResponse.body,
-      '===================== 2',
+      '===================== 3',
     );
     expect(loginCompleteResponse.status).toBe(200);
     expect(loginCompleteResponse.body).toHaveProperty('accessToken');
