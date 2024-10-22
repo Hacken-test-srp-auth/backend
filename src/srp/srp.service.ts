@@ -29,8 +29,8 @@ export class SrpService {
     serverPublicKey: string,
     verifier: string,
   ) {
-    console.log('its N ===>:', this.N);
-    console.log('its env N ===>:', process.env.N);
+    console.log('its N ===> :', this.N);
+    console.log('its env N ===>: ', process.env.N);
 
     const A = ethers.toBigInt(clientPublicKey);
     const serverPrivateKeyBigInt = BigInt(serverPrivateKey);
