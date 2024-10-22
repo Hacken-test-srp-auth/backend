@@ -7,6 +7,10 @@ export class SrpService {
   public readonly g = ethers.toBigInt(process.env.g);
   public readonly k = ethers.toBigInt(process.env.k);
 
+  constructor() {
+    console.log(this.N);
+  }
+
   generateServerCredentials(verifier: string) {
     const serverPrivateKey = ethers.toBigInt(ethers.randomBytes(32));
     const v = ethers.toBigInt(`0x${verifier}`);
