@@ -30,6 +30,9 @@ jobs:
       N: ${{ fromJson(secrets.TEST_ENVS).srp.N }}
       g: ${{ fromJson(secrets.TEST_ENVS).srp.g }}
       k: ${{ fromJson(secrets.TEST_ENVS).srp.k }}
+      
+      # Environment
+      NODE_ENV: test
 
     steps:
     - uses: actions/checkout@v4
@@ -43,9 +46,15 @@ jobs:
     - name: Install dependencies
       run: yarn install --frozen-lockfile
 
+    - name: Set up Docker Compose
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y docker-compose-plugin
+        docker compose version
+
     - name: Start test services
-      run: yarn test:e2e:ci:services:up
-      
+      run: docker compose -f docker-compose.test.yml up -d
+            
     - name: Wait for services
       run: |
         timeout 30 bash -c 'until echo > /dev/tcp/localhost/5432; do sleep 1; done'
@@ -59,8 +68,7 @@ jobs:
       
     - name: Stop test services
       if: always()
-      run: yarn test:e2e:ci:services:down
+      run: docker compose -f docker-compose.test.yml down
 
     - name: Run build
       run: yarn build
-      
