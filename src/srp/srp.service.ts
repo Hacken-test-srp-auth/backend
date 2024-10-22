@@ -14,6 +14,9 @@ export class SrpService {
     const serverPublicKey =
       (this.k * v + this.modPow(this.g, serverPrivateKey, this.N)) % this.N;
 
+    console.log(N, 1);
+    console.log(process.env.N, 2);
+
     return {
       serverPrivateKey: serverPrivateKey,
       serverPublicKey: serverPublicKey,
