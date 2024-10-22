@@ -94,8 +94,12 @@ describe('Authentication (e2e)', () => {
       '===================== 3',
     );
     expect(loginCompleteResponse.status).toBe(200);
+    console.log('1')
     expect(loginCompleteResponse.body).toHaveProperty('accessToken');
+    console.log('2')
     expect(loginCompleteResponse.body).toHaveProperty('refreshToken');
+    console.log('3')
     expect(loginCompleteResponse.body).toHaveProperty('M2');
+    console.log('4')
   });
 });
