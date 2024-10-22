@@ -26,17 +26,13 @@ export class SrpService {
     serverPublicKey: string,
     verifier: string,
   ) {
-    console.log(3, 1, clientPublicKey);
     const A = ethers.toBigInt(clientPublicKey);
-    console.log(3, 2);
     const serverPrivateKeyBigInt = BigInt(serverPrivateKey);
-    console.log(3, 3);
     const serverPublicKeyBigInt = BigInt(serverPublicKey);
-    console.log(3, 4);
     if (A % this.N === 0n) {
       return { isValid: false, M2: null };
     }
-    console.log(3, 5);
+
     const u = ethers.toBigInt(
       ethers.keccak256(
         ethers.concat([

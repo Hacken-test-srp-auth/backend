@@ -28,9 +28,9 @@
 
     
     "test:e2e:local": "yarn test:e2e:local:services:up && yarn test:e2e:local:run || yarn test:e2e:local:services:down",
-    "test:e2e:local:run": "ENV_FILE_PATH=./environments/.env.test jest --config ./test/jest-e2e.json --runInBand --forceExit --verbose",
-    "test:e2e:local:services:up": "docker-compose -f docker-compose.test.yml --env-file ./environments/.env.test up -d",
-    "test:e2e:local:services:down": "docker-compose -f docker-compose.test.yml --env-file ./environments/.env.test down",
+    "test:e2e:local:run": "ENV_FILE_PATH=./environments/.env.e2e jest --config ./test/jest-e2e.json --runInBand --forceExit --verbose",
+    "test:e2e:local:services:up": "docker-compose -f docker-compose.test.yml --env-file ./environments/.env.e2e up -d",
+    "test:e2e:local:services:down": "docker-compose -f docker-compose.test.yml --env-file ./environments/.env.e2e down",
 
     "test:ci": "jest --config ./test/jest-e2e.json --runInBand --forceExit --verbose",
 
