@@ -8,7 +8,7 @@
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "nest start",
+    "start": "node dist/main",
     "start:dev": "dotenv -e environments/.env.local nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
@@ -28,7 +28,9 @@
     "test:e2e": "ENV_FILE_PATH=./environments/.env.e2e jest --config ./test/jest-e2e.json --runInBand --forceExit --verbose || yarn run test:e2e:services:down",
     "posttest:e2e": "yarn run test:e2e:services:down",
     "test:e2e:services:up": "docker-compose -f docker-compose.test.yml --env-file ./environments/.env.e2e up -d",
-    "test:e2e:services:down": "docker-compose -f docker-compose.test.yml --env-file ./environments/.env.e2e down"
+    "test:e2e:services:down": "docker-compose -f docker-compose.test.yml --env-file ./environments/.env.e2e down",
+
+    "start:with-migrations": "yarn typeorm migration:run -d dist/db/data-source.js && node dist/main"
   },
   "dependencies": {
     "@nestjs/common": "^10.4.4",

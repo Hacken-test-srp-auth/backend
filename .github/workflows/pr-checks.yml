@@ -1,0 +1,69 @@
+name: PR Check
+
+on:
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    env:
+      # Database
+      POSTGRES_DB: ${{ fromJson(secrets.TEST_ENVS).database.POSTGRES_DB }}
+      POSTGRES_USER: ${{ fromJson(secrets.TEST_ENVS).database.POSTGRES_USER }}
+      POSTGRES_PASSWORD: ${{ fromJson(secrets.TEST_ENVS).database.POSTGRES_PASSWORD }}
+      DB_HOST: ${{ fromJson(secrets.TEST_ENVS).database.DB_HOST }}
+      DB_PORT: ${{ fromJson(secrets.TEST_ENVS).database.DB_PORT }}
+      
+      # JWT
+      JWT_SECRET: ${{ fromJson(secrets.TEST_ENVS).jwt.JWT_SECRET }}
+      JWT_EXPIRATION_TIME: ${{ fromJson(secrets.TEST_ENVS).jwt.JWT_EXPIRATION_TIME }}
+      JWT_REFRESH_SECRET: ${{ fromJson(secrets.TEST_ENVS).jwt.JWT_REFRESH_SECRET }}
+      JWT_REFRESH_EXPIRATION_TIME: ${{ fromJson(secrets.TEST_ENVS).jwt.JWT_REFRESH_EXPIRATION_TIME }}
+      
+      # Redis
+      REDIS_SESSION_PORT: ${{ fromJson(secrets.TEST_ENVS).redis.REDIS_SESSION_PORT }}
+      REDIS_BLACKLIST_PORT: ${{ fromJson(secrets.TEST_ENVS).redis.REDIS_BLACKLIST_PORT }}
+      
+      # SRP
+      N: ${{ fromJson(secrets.TEST_ENVS).srp.N }}
+      g: ${{ fromJson(secrets.TEST_ENVS).srp.g }}
+      k: ${{ fromJson(secrets.TEST_ENVS).srp.k }}
+      
+      # Environment
+      NODE_ENV: test
+      ENV_FILE_PATH: ./environments/.env.test
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'yarn'
+
+    - name: Install dependencies
+      run: yarn install --frozen-lockfile
+
+    - name: Start test services
+      run: yarn test:e2e:services:up
+      
+    - name: Wait for services
+      run: |
+        timeout 30 bash -c 'until echo > /dev/tcp/localhost/5432; do sleep 1; done'
+        timeout 30 bash -c 'until echo > /dev/tcp/localhost/6379; do sleep 1; done'
+
+    - name: Run linter
+      run: yarn lint
+
+    - name: Run build
+      run: yarn build
+      
+    - name: Run tests
+      run: yarn test:e2e
+      
+    - name: Stop test services
+      if: always()
+      run: yarn test:e2e:services:down

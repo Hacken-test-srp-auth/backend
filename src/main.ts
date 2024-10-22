@@ -7,9 +7,16 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   app.enableCors({
     exposedHeaders: ['Content-Disposition'],
-    origin: 'http://localhost:5173',
+    origin: '*',
     credentials: true,
   });
-  await app.listen(3000);
+
+  console.log(`Application is running on port ==============================`);
+
+  const port = process.env.PORT || 8080;
+  await app.listen(port, '0.0.0.0');
 }
-bootstrap();
+bootstrap().catch((err) => {
+  console.error('Bootstrap error:', err);
+  process.exit(1);
+});
