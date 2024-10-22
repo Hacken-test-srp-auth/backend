@@ -15,11 +15,6 @@ export const REDIS_INVALID_TOKENS = 'REDIS_INVALID_TOKENS';
           port: +process.env.REDIS_SESSION_PORT,
           db: +process.env.REDIS_SESSION_DB,
         });
-
-        redisClient.on('error', (err) => {
-          console.error('Redis Session Client error:', err);
-        });
-
         return redisClient;
       },
     },
@@ -31,11 +26,6 @@ export const REDIS_INVALID_TOKENS = 'REDIS_INVALID_TOKENS';
           port: +process.env.REDIS_BLACKLIST_PORT,
           db: +process.env.REDIS_BLACKLIST_DB,
         });
-
-        redisClient.on('error', (err) => {
-          console.error('Redis Blacklist Client error:', err);
-        });
-
         return redisClient;
       },
     },
