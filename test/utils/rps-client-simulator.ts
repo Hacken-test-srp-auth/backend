@@ -4,12 +4,13 @@ const N =
 console.log(process.env.N === N);
 console.log(N);
 console.log(process.env.N);
+console.log(process.env.SRP_N);
 console.log(BigInt(N));
 console.log(BigInt(process.env.N));
 
 
 class SRPClientSimulator {
-  private N = BigInt(process.env.N);
+  private N = BigInt(process.env.SRP_N);
   private g = BigInt(process.env.g);
   private k = BigInt(process.env.k);
 
