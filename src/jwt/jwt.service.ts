@@ -11,7 +11,7 @@ export class JwtService {
   private readonly JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
   private readonly JWT_REFRESH_EXPIRATION_TIME =
     process.env.JWT_REFRESH_EXPIRATION_TIME;
-  private readonly BLACKLIST_TTL = 60 * 60;
+  private readonly BLACKLIST_TTL = 3600;
 
   constructor(
     private nestJwtService: NestJwtService,
