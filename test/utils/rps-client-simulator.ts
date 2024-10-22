@@ -1,9 +1,9 @@
 import { ethers } from 'ethers';
 
 class SRPClientSimulator {
-  private N = ethers.toBigInt(process.env.N);
-  private g = ethers.toBigInt(process.env.g);
-  private k = ethers.toBigInt(process.env.k);
+  private N = BigInt(process.env.N);
+  private g = BigInt(process.env.g);
+  private k = BigInt(process.env.k);
 
   private modPow(base: bigint, exponent: bigint, modulus: bigint): bigint {
     let result = 1n;
