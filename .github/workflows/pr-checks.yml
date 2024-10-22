@@ -27,7 +27,7 @@ jobs:
       REDIS_BLACKLIST_PORT: ${{ fromJson(secrets.TEST_ENVS).redis.REDIS_BLACKLIST_PORT }}
       
       # SRP
-      N: ${{ fromJson(secrets.TEST_ENVS).srp.N }}
+      N: ${{ secrets.SRP_N }}
       g: ${{ fromJson(secrets.TEST_ENVS).srp.g }}
       k: ${{ fromJson(secrets.TEST_ENVS).srp.k }}
       
