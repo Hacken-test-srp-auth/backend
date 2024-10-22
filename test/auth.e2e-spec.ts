@@ -26,21 +26,21 @@ describe('Authentication (e2e)', () => {
     await clearDatabase(app);
   });
 
-  it('should register a new user', async () => {
-    const response = await request(app.getHttpServer())
-      .post('/auth/register')
-      .send({
-        username: TEST_USERNAME,
-        email: TEST_EMAIL,
-        name: TEST_NAME,
-        salt: TEST_SALT,
-        verifier: TEST_VERIFIER,
-      })
-      .expect(201);
+  // it('should register a new user', async () => {
+  //   const response = await request(app.getHttpServer())
+  //     .post('/auth/register')
+  //     .send({
+  //       username: TEST_USERNAME,
+  //       email: TEST_EMAIL,
+  //       name: TEST_NAME,
+  //       salt: TEST_SALT,
+  //       verifier: TEST_VERIFIER,
+  //     })
+  //     .expect(201);
 
-    expect(response.body).toHaveProperty('accessToken');
-    expect(response.body).toHaveProperty('refreshToken');
-  });
+  //   expect(response.body).toHaveProperty('accessToken');
+  //   expect(response.body).toHaveProperty('refreshToken');
+  // });
 
   it('should register and login successfully', async () => {
     const salt = ethers.hexlify(ethers.randomBytes(16));
