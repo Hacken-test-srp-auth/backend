@@ -11,12 +11,7 @@ async function bootstrap() {
     credentials: true,
   });
 
-  console.log(`Application is running on port ==============================`);
-
   const port = process.env.PORT || 8080;
   await app.listen(port, '0.0.0.0');
 }
-bootstrap().catch((err) => {
-  console.error('Bootstrap error:', err);
-  process.exit(1);
-});
+bootstrap();

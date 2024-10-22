@@ -13,7 +13,6 @@ export class JwtController {
 
   @Get('create/:userId')
   async create(@Param('userId') userId: string) {
-    console.log('======>', userId);
     return this.jwtService.createTokens(userId);
   }
 }
