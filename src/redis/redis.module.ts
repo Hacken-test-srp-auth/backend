@@ -12,8 +12,8 @@ export const REDIS_INVALID_TOKENS = 'REDIS_INVALID_TOKENS';
       useFactory: () => {
         const redisClient = new Redis({
           host: process.env.REDIS_SESSION_HOST,
-          port: +process.env.REDIS_SESSION_PORT,
-          db: +process.env.REDIS_SESSION_DB,
+          port: Number(process.env.REDIS_SESSION_PORT),
+          db: Number(process.env.REDIS_SESSION_DB),
         });
 
         return redisClient;
