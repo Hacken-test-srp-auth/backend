@@ -90,6 +90,11 @@ describe('Authentication (e2e)', () => {
         clientProof,
       });
 
+    console.log(
+      '=====================',
+      loginCompleteResponse.body,
+      '=====================',
+    );
     expect(loginCompleteResponse.status).toBe(200);
     expect(loginCompleteResponse.body).toHaveProperty('accessToken');
     expect(loginCompleteResponse.body).toHaveProperty('refreshToken');
