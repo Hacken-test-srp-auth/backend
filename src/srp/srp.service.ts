@@ -8,7 +8,7 @@ export class SrpService {
   public readonly k = ethers.toBigInt(process.env.k);
 
   constructor() {
-    console.log(this.N);
+    console.log('its N ===>:', this.N);
   }
 
   generateServerCredentials(verifier: string) {
