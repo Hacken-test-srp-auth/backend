@@ -62,12 +62,13 @@ export class AuthService {
       );
     }
 
-    const { serverPrivateKey, serverPublicKey } =
-      this.srpService.generateServerCredentials(user.verifier);
+    const { serverPublicKey } = this.srpService.generateServerCredentials(
+      user.verifier,
+    );
 
     const loginProcessSession: ServerSession = {
-      serverPrivateKey: serverPrivateKey.toString(),
-      serverPublicKey: serverPublicKey.toString(),
+      serverPrivateKey: '1234',
+      serverPublicKey: '1234',
       user,
     };
 
