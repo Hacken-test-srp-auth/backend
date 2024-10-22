@@ -71,6 +71,8 @@ export class AuthService {
       user,
     };
 
+    console.log('==============', loginProcessSession);
+
     await this.redisLoginStorage.set(
       `session:${email}`,
       JSON.stringify(loginProcessSession),
