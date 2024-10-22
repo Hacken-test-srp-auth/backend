@@ -6,9 +6,9 @@ import { ethers } from 'ethers';
 
 const TEST_NAME = 'testname';
 const TEST_USERNAME = 'testusername';
-const TEST_SALT = 'testsalt';
+// const TEST_SALT = 'testsalt';
 const TEST_EMAIL = 'testemail@gmail.com';
-const TEST_VERIFIER = 'testverifier';
+// const TEST_VERIFIER = 'testverifier';
 const TEST_PASSWORD = 'testpasword';
 
 describe('Authentication (e2e)', () => {
@@ -89,19 +89,14 @@ describe('Authentication (e2e)', () => {
           clientProof,
         });
 
-        expect(loginCompleteResponse.status).toBe(200);
-        expect(loginCompleteResponse.body).toHaveProperty('accessToken');
-        expect(loginCompleteResponse.body).toHaveProperty('refreshToken');
-        expect(loginCompleteResponse.body).toHaveProperty('M2');
-
-
+      expect(loginCompleteResponse.status).toBe(200);
+      expect(loginCompleteResponse.body).toHaveProperty('accessToken');
+      expect(loginCompleteResponse.body).toHaveProperty('refreshToken');
+      expect(loginCompleteResponse.body).toHaveProperty('M2');
     } catch (error) {
-
-      console.log(error)
+      console.log(error);
     }
 
     console.log('==================');
-
-
   });
 });
