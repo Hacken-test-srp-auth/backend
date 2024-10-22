@@ -71,13 +71,6 @@ export class AuthService {
       user,
     };
 
-    console.log('==============', serverPrivateKey, serverPublicKey);
-    console.log(
-      '============== string ',
-      serverPrivateKey.toString(16),
-      serverPublicKey.toString(16),
-    );
-
     try {
       await this.redisLoginStorage.set(
         `session:${email}`,

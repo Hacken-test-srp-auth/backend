@@ -44,15 +44,12 @@ export class SrpService {
         ]),
       ),
     );
-    console.log(3, 6);
 
     const base =
       (A * this.modPow(ethers.toBigInt(`0x${verifier}`), u, this.N)) % this.N;
 
-    console.log(3, 7);
     const S = this.modPow(base, serverPrivateKeyBigInt, this.N);
 
-    console.log('server S =====>', S);
     const K = ethers.keccak256(ethers.toBeArray(S));
 
     const expectedM1 = ethers.keccak256(
