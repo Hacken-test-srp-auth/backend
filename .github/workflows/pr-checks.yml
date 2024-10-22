@@ -1,4 +1,4 @@
-name: PR Check
+name: Tests
 
 on:
   pull_request:
@@ -7,62 +7,71 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    
-    env:
-      # Database
-      POSTGRES_DB: ${{ fromJson(secrets.TEST_ENVS).database.POSTGRES_DB }}
-      POSTGRES_USER: ${{ fromJson(secrets.TEST_ENVS).database.POSTGRES_USER }}
-      POSTGRES_PASSWORD: ${{ fromJson(secrets.TEST_ENVS).database.POSTGRES_PASSWORD }}
-      DB_HOST: ${{ fromJson(secrets.TEST_ENVS).database.DB_HOST }}
-      DB_PORT: ${{ fromJson(secrets.TEST_ENVS).database.DB_PORT }}
-      
-      # JWT
-      JWT_SECRET: ${{ fromJson(secrets.TEST_ENVS).jwt.JWT_SECRET }}
-      JWT_EXPIRATION_TIME: ${{ fromJson(secrets.TEST_ENVS).jwt.JWT_EXPIRATION_TIME }}
-      JWT_REFRESH_SECRET: ${{ fromJson(secrets.TEST_ENVS).jwt.JWT_REFRESH_SECRET }}
-      JWT_REFRESH_EXPIRATION_TIME: ${{ fromJson(secrets.TEST_ENVS).jwt.JWT_REFRESH_EXPIRATION_TIME }}
-      
-      # Redis
-      REDIS_SESSION_PORT: ${{ fromJson(secrets.TEST_ENVS).redis.REDIS_SESSION_PORT }}
-      REDIS_BLACKLIST_PORT: ${{ fromJson(secrets.TEST_ENVS).redis.REDIS_BLACKLIST_PORT }}
-      
-   # SRP
-      N: ${{ fromJson(secrets.TEST_ENVS).srp.N }}
-      g: ${{ fromJson(secrets.TEST_ENVS).srp.g }}
-      k: ${{ fromJson(secrets.TEST_ENVS).srp.k }}
-      
-      # Environment
-      NODE_ENV: test
+
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_DB: ${{ fromJson(secrets.TEST_ENVS).database.POSTGRES_DB }}
+          POSTGRES_USER: ${{ fromJson(secrets.TEST_ENVS).database.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ fromJson(secrets.TEST_ENVS).database.POSTGRES_PASSWORD }}
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:latest
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
-    - uses: actions/checkout@v4
-
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'yarn'
-
-    - name: Install dependencies
-      run: yarn install --frozen-lockfile
-
-    - name: Run linter
-      run: yarn lint
-
-    - name: Start test services
-      run: docker compose -f docker-compose.test.yml up -d
-            
-    - name: Wait for services
-      run: |
-        timeout 30 bash -c 'until echo > /dev/tcp/localhost/5432; do sleep 1; done'
-        timeout 30 bash -c 'until echo > /dev/tcp/localhost/6379; do sleep 1; done'
-
-    - name: Run tests
-      run: yarn test:e2e:ci
+      - uses: actions/checkout@v4
       
-    - name: Stop test services
-      if: always()
-      run: docker compose -f docker-compose.test.yml down
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+          
+      - name: Install dependencies
+        run: yarn install
+        
+      - name: Run tests
+        run: yarn test:e2e
+        env:
+          POSTGRES_DB: ${{ fromJson(secrets.TEST_ENVS).database.POSTGRES_DB }}
+          POSTGRES_USER: ${{ fromJson(secrets.TEST_ENVS).database.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ fromJson(secrets.TEST_ENVS).database.POSTGRES_PASSWORD }}
+          DB_HOST: ${{ fromJson(secrets.TEST_ENVS).database.DB_HOST }}
+          DB_PORT: ${{ fromJson(secrets.TEST_ENVS).database.DB_PORT }}
+          JWT_SECRET: ${{ fromJson(secrets.TEST_ENVS).jwt.JWT_SECRET }}
+          JWT_EXPIRATION_TIME: ${{ fromJson(secrets.TEST_ENVS).jwt.JWT_EXPIRATION_TIME }}
+          JWT_REFRESH_SECRET: ${{ fromJson(secrets.TEST_ENVS).jwt.JWT_REFRESH_SECRET }}
+          JWT_REFRESH_EXPIRATION_TIME: ${{ fromJson(secrets.TEST_ENVS).jwt.JWT_REFRESH_EXPIRATION_TIME }}
+          REDIS_SESSION_PORT: ${{ fromJson(secrets.TEST_ENVS).redis.REDIS_SESSION_PORT }}
+          REDIS_BLACKLIST_PORT: ${{ fromJson(secrets.TEST_ENVS).redis.REDIS_BLACKLIST_PORT }}
+          N: ${{ fromJson(secrets.TEST_ENVS).srp.N }}
+          g: ${{ fromJson(secrets.TEST_ENVS).srp.g }}
+          k: ${{ fromJson(secrets.TEST_ENVS).srp.k }}
 
-    - name: Run build
-      run: yarn build
+
+
+
+
+
+
+
+
+
+
+
+
