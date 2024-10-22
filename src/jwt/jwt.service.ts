@@ -67,13 +67,14 @@ export class JwtService {
   }
 
   async addToBlacklist(token: string): Promise<void> {
-    console.log(this.BLACKLIST_TTL);
-    await this.redisInvalidTokens.set(`bl_${token}`, '1', 'EX', 60 * 60);
+    const key = `bl_${Buffer.from(token).toString('base64')}`;
+    await this.redisInvalidTokens.set(key, '1', 'EX', this.BLACKLIST_TTL);
   }
 
   async isBlacklisted(token: string): Promise<boolean> {
+    const key = `bl_${Buffer.from(token).toString('base64')}`;
     console.log('tyt =====> ', this.BLACKLIST_TTL);
-    const exists = await this.redisInvalidTokens.exists(`bl_${token}`);
+    const exists = await this.redisInvalidTokens.exists(key);
     return exists === 1;
   }
 
