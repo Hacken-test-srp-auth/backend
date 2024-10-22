@@ -28,8 +28,8 @@ jobs:
       
       # SRP
       N: ${{ secrets.SRP_N }}
-      g: ${{ fromJson(secrets.TEST_ENVS).srp.g }}
-      k: ${{ fromJson(secrets.TEST_ENVS).srp.k }}
+      g: 2
+      k: 3
       
       # Environment
       NODE_ENV: test
