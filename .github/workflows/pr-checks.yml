@@ -46,7 +46,7 @@ jobs:
         run: yarn install
         
       - name: Run tests
-        run: yarn test:e2e
+        run: yarn test:ci
         env:
           POSTGRES_DB: ${{ fromJson(secrets.TEST_ENVS).database.POSTGRES_DB }}
           POSTGRES_USER: ${{ fromJson(secrets.TEST_ENVS).database.POSTGRES_USER }}

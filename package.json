@@ -32,9 +32,7 @@
     "test:e2e:local:services:up": "docker-compose -f docker-compose.test.yml --env-file ./environments/.env.test up -d",
     "test:e2e:local:services:down": "docker-compose -f docker-compose.test.yml --env-file ./environments/.env.test down",
 
-    "test:e2e:ci": "yarn test:e2e:ci:run",
-    "test:e2e:ci:run": "jest --config ./test/jest-e2e.json --runInBand --forceExit --verbose",
-
+    "test:ci": "jest --config ./test/jest-e2e.json --runInBand --forceExit --verbose",
 
     "start:with-migrations": "yarn typeorm migration:run -d dist/db/data-source.js && node dist/main"
   },
