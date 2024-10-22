@@ -116,7 +116,7 @@ export class AuthService {
       const tokens = await this.jwtService.createTokens(user.id);
       return { ...tokens, M2: M2 };
     } catch (error) {
-      console.log('=========== error    ======');
+      console.log('===========   error    ======');
       console.log(error);
       throw new UnauthorizedException(error);
     } finally {
