@@ -57,12 +57,17 @@ jobs:
           JWT_EXPIRATION_TIME: ${{ fromJson(secrets.TEST_ENVS).jwt.JWT_EXPIRATION_TIME }}
           JWT_REFRESH_SECRET: ${{ fromJson(secrets.TEST_ENVS).jwt.JWT_REFRESH_SECRET }}
           JWT_REFRESH_EXPIRATION_TIME: ${{ fromJson(secrets.TEST_ENVS).jwt.JWT_REFRESH_EXPIRATION_TIME }}
-          REDIS_SESSION_PORT: ${{ fromJson(secrets.TEST_ENVS).redis.REDIS_SESSION_PORT }}
-          REDIS_BLACKLIST_PORT: ${{ fromJson(secrets.TEST_ENVS).redis.REDIS_BLACKLIST_PORT }}
+          REDIS_SESSION_PORT: 6379
+          REDIS_BLACKLIST_PORT: 6379
+          REDIS_BLACKLIST_HOST: localhost
+          REDIS_SESSION_HOST: localhost
+          REDIS_SESSION_DB: 0
+          REDIS_BLACKLIST_DB: 1
           N: ${{ fromJson(secrets.TEST_ENVS).srp.N }}
           g: ${{ fromJson(secrets.TEST_ENVS).srp.g }}
           k: ${{ fromJson(secrets.TEST_ENVS).srp.k }}
 
+REDIS_SESSION_DB
 
 
 
