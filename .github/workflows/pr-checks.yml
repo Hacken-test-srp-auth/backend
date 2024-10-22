@@ -30,10 +30,6 @@ jobs:
       N: ${{ fromJson(secrets.TEST_ENVS).srp.N }}
       g: ${{ fromJson(secrets.TEST_ENVS).srp.g }}
       k: ${{ fromJson(secrets.TEST_ENVS).srp.k }}
-      
-      # Environment
-      NODE_ENV: test
-      ENV_FILE_PATH: ./environments/.env.test
 
     steps:
     - uses: actions/checkout@v4
@@ -58,12 +54,13 @@ jobs:
     - name: Run linter
       run: yarn lint
 
-    - name: Run build
-      run: yarn build
-      
     - name: Run tests
-      run: yarn test:e2e
+      run: yarn test:e2e:ci
       
     - name: Stop test services
       if: always()
-      run: yarn test:e2e:services:down
+      run: yarn test:e2e:ci:services:down
+
+    - name: Run build
+      run: yarn build
+      
