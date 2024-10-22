@@ -29,9 +29,8 @@ export class SrpService {
   ) {
     const A = ethers.toBigInt(clientPublicKey);
 
-    const serverPrivateKeyBigInt = ethers.toBigInt(serverPrivateKey);
-
-    const serverPublicKeyBigInt = ethers.toBigInt(serverPublicKey);
+    const serverPrivateKeyBigInt = ethers.toBigInt(`Ox${serverPrivateKey}`);
+    const serverPublicKeyBigInt = ethers.toBigInt(`Ox${serverPublicKey}`);
 
     if (A % this.N === 0n) {
       return { isValid: false, M2: null };

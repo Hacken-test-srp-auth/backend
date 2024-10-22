@@ -66,16 +66,16 @@ export class AuthService {
       this.srpService.generateServerCredentials(user.verifier);
 
     const loginProcessSession: ServerSession = {
-      serverPrivateKey: serverPrivateKey.toString(),
-      serverPublicKey: serverPublicKey.toString(),
+      serverPrivateKey: serverPrivateKey.toString(16),
+      serverPublicKey: serverPublicKey.toString(16),
       user,
     };
 
     console.log('==============', serverPrivateKey, serverPublicKey);
     console.log(
       '============== string ',
-      serverPrivateKey.toString(),
-      serverPublicKey.toString(),
+      serverPrivateKey.toString(16),
+      serverPublicKey.toString(16),
     );
 
     try {
