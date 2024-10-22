@@ -66,6 +66,7 @@ jobs:
           N: ${{ fromJson(secrets.TEST_ENVS).srp.N }}
           g: ${{ fromJson(secrets.TEST_ENVS).srp.g }}
           k: ${{ fromJson(secrets.TEST_ENVS).srp.k }}
+          SRP_N: ${{ secrets.SRP_N }}
 
 
 
