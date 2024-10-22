@@ -44,7 +44,7 @@ jobs:
       run: yarn install --frozen-lockfile
 
     - name: Start test services
-      run: yarn test:e2e:services:up
+      run: yarn test:e2e:ci:services:up
       
     - name: Wait for services
       run: |
