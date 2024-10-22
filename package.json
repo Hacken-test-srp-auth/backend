@@ -22,13 +22,22 @@
     "migration:generate": "yarn run typeorm migration:generate -- -d src/db/data-source.ts",
     "migration:create": "yarn run typeorm migration:create src/db/migrations",
     "migration:run": "yarn run typeorm migration:run -- -d src/db/data-source.ts",
+
     "services:up": "docker-compose --env-file ./environments/.env.local --profile development up -d",
     "services:down": "docker-compose --env-file ./environments/.env.local --profile development down",
+
+
     "pretest:e2e": "yarn run test:e2e:services:up",
     "test:e2e": "ENV_FILE_PATH=./environments/.env.e2e jest --config ./test/jest-e2e.json --runInBand --forceExit --verbose || yarn run test:e2e:services:down",
     "posttest:e2e": "yarn run test:e2e:services:down",
     "test:e2e:services:up": "docker-compose -f docker-compose.test.yml --env-file ./environments/.env.e2e up -d",
     "test:e2e:services:down": "docker-compose -f docker-compose.test.yml --env-file ./environments/.env.e2e down",
+
+    "test:e2e:ci": "yarn run test:e2e:ci:services:up && yarn run test:e2e:ci:run || yarn run test:e2e:ci:services:down",
+    "test:e2e:ci:run": "jest --config ./test/jest-e2e.json --runInBand --forceExit --verbose",
+    "test:e2e:ci:services:up": "docker-compose -f docker-compose.test.yml up -d",
+    "test:e2e:ci:services:down": "docker-compose -f docker-compose.test.yml down",
+
 
     "start:with-migrations": "yarn typeorm migration:run -d dist/db/data-source.js && node dist/main"
   },
