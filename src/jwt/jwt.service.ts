@@ -35,6 +35,11 @@ export class JwtService {
   }
 
   async generateRefreshToken(payload: any): Promise<string> {
+    console.log('this.JWT_REFRESH_SECRET', this.JWT_REFRESH_SECRET);
+    console.log(
+      'this.JWT_REFRESH_EXPIRATION_TIME',
+      this.JWT_REFRESH_EXPIRATION_TIME,
+    );
     return this.nestJwtService.sign(payload, {
       secret: this.JWT_REFRESH_SECRET,
       expiresIn: this.JWT_REFRESH_EXPIRATION_TIME,
@@ -50,6 +55,7 @@ export class JwtService {
   async createTokens(userId: string) {
     console.log('createTokens', userId);
     const payload = { sub: userId };
+    console.log('payload', payload);
     const accessToken = await this.generateToken(payload);
     const refreshToken = await this.generateRefreshToken(payload);
 
