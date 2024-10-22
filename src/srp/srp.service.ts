@@ -3,7 +3,7 @@ import { ethers } from 'ethers';
 
 @Injectable()
 export class SrpService {
-  public readonly N = ethers.toBigInt(process.env.N);
+  public readonly N = ethers.toBigInt(process.env.SRP_N);
   public readonly g = ethers.toBigInt(process.env.g);
   public readonly k = ethers.toBigInt(process.env.k);
 
