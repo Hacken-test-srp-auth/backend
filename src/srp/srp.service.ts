@@ -7,8 +7,8 @@ const N =
 @Injectable()
 export class SrpService {
   public readonly N = ethers.toBigInt(N);
-  public readonly g = ethers.toBigInt(process.env.g);
-  public readonly k = ethers.toBigInt(process.env.k);
+  public readonly g = ethers.toBigInt(2);
+  public readonly k = ethers.toBigInt(3);
 
   generateServerCredentials(verifier: string) {
     const serverPrivateKey = ethers.toBigInt(ethers.randomBytes(32));
