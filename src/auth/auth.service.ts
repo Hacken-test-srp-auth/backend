@@ -78,12 +78,17 @@ export class AuthService {
       serverPublicKey.toString(),
     );
 
-    await this.redisLoginStorage.set(
-      `session:${email}`,
-      JSON.stringify(loginProcessSession),
-      'EX',
-      this.LOGIN_STORAGE_TTL,
-    );
+    try {
+      await this.redisLoginStorage.set(
+        `session:${email}`,
+        JSON.stringify(loginProcessSession),
+        'EX',
+        this.LOGIN_STORAGE_TTL,
+      );
+    } catch (error) {
+      console.log('put in redis : ', error);
+    }
+
     return {
       salt: user.salt,
       serverPublicKey: serverPublicKey.toString(16),
@@ -118,6 +123,7 @@ export class AuthService {
       const tokens = await this.jwtService.createTokens(user.id);
       return { ...tokens, M2: M2 };
     } catch (error) {
+      console.log('=========== error    ======');
       console.log(error);
       throw new UnauthorizedException(error);
     } finally {
