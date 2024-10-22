@@ -89,7 +89,7 @@ describe('Authentication (e2e)', () => {
       });
 
     console.log(
-      '===================== 3',
+      ' cirocke ===================== 3',
       loginCompleteResponse.body,
       '===================== 3',
     );

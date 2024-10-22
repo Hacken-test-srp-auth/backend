@@ -70,7 +70,7 @@ export class AuthService {
       serverPublicKey: serverPublicKey.toString(),
       user,
     };
-    console.log(this.LOGIN_STORAGE_TTL);
+    console.log('this.LOGIN_STORAGE_TTL', this.LOGIN_STORAGE_TTL);
 
     await this.redisLoginStorage.set(
       `session:${email}`,

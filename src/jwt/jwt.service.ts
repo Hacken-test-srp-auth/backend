@@ -48,9 +48,12 @@ export class JwtService {
   }
 
   async createTokens(userId: string) {
+    console.log('createTokens', userId);
     const payload = { sub: userId };
     const accessToken = await this.generateToken(payload);
     const refreshToken = await this.generateRefreshToken(payload);
+
+    console.log('createTokens', accessToken, refreshToken);
 
     return { accessToken, refreshToken };
   }
