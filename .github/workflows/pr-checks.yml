@@ -67,8 +67,6 @@ jobs:
           g: ${{ fromJson(secrets.TEST_ENVS).srp.g }}
           k: ${{ fromJson(secrets.TEST_ENVS).srp.k }}
 
-REDIS_SESSION_DB
-
 
 
 
