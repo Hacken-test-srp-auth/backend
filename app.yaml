@@ -1,8 +1,41 @@
-runtime: nodejs18
+runtime: nodejs20
 env: standard
 instance_class: F1
+
 automatic_scaling:
-  min_idle_instances: 0
+  min_idle_instances: 1
   max_idle_instances: 1
   min_pending_latency: 3000ms
   max_pending_latency: automatic
+
+vpc_access_connector:
+  name: projects/srp-auth-hacken/locations/europe-central2/connectors/connector
+
+env_variables:
+  POSTGRES_DB: ${POSTGRES_DB}
+  POSTGRES_USER: ${POSTGRES_USER}
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  DB_HOST: ${DB_HOST}
+  DB_PORT: ${DB_PORT}
+  PORT: ${PORT}
+  N: ${N}
+  g: ${g}
+  k: ${k}
+  JWT_SECRET: ${JWT_SECRET}
+  JWT_EXPIRATION_TIME: ${JWT_EXPIRATION_TIME}
+  JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+  JWT_REFRESH_EXPIRATION_TIME: ${JWT_REFRESH_EXPIRATION_TIME}
+  REDIS_SESSION_HOST: ${REDIS_SESSION_HOST}
+  REDIS_SESSION_PORT: ${REDIS_SESSION_PORT}
+  REDIS_SESSION_DB: ${REDIS_SESSION_DB}
+  REDIS_BLACKLIST_HOST: ${REDIS_BLACKLIST_HOST}
+  REDIS_BLACKLIST_PORT: ${REDIS_BLACKLIST_PORT}
+  REDIS_BLACKLIST_DB: ${REDIS_BLACKLIST_DB}
+  NODE_ENV: production
+
+handlers:
+  - url: /.*
+    script: auto
+    secure: always
+
+entrypoint: yarn start:with-migrations

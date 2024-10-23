@@ -1,22 +1,22 @@
-name: Tests
+name: PR Checks
 
 on:
   pull_request:
     branches: [ master ]
 
 jobs:
-  test:
+  checks:
     runs-on: ubuntu-latest
 
     services:
       postgres:
         image: postgres:latest
         env:
-          POSTGRES_DB: ${{ fromJson(secrets.TEST_ENVS).database.POSTGRES_DB }}
-          POSTGRES_USER: ${{ fromJson(secrets.TEST_ENVS).database.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ fromJson(secrets.TEST_ENVS).database.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ fromJson(secrets.TEST_ENVS).POSTGRES_DB }}
+          POSTGRES_USER: ${{ fromJson(secrets.TEST_ENVS).POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ fromJson(secrets.TEST_ENVS).POSTGRES_PASSWORD }}
         ports:
-          - 5432:5432
+          - ${{ fromJson(secrets.TEST_ENVS).DB_PORT }}:5432
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -26,7 +26,7 @@ jobs:
       redis:
         image: redis:latest
         ports:
-          - 6379:6379
+          - ${{ fromJson(secrets.TEST_ENVS).REDIS_SESSION_PORT }}:6379
         options: >-
           --health-cmd "redis-cli ping"
           --health-interval 10s
@@ -44,38 +44,33 @@ jobs:
           
       - name: Install dependencies
         run: yarn install
+
+      - name: Lint
+        run: yarn lint
         
-      - name: Run tests
+      - name: Build
+        run: yarn build
+        
+      - name: Test
         run: yarn test:ci
         env:
-          POSTGRES_DB: ${{ fromJson(secrets.TEST_ENVS).database.POSTGRES_DB }}
-          POSTGRES_USER: ${{ fromJson(secrets.TEST_ENVS).database.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ fromJson(secrets.TEST_ENVS).database.POSTGRES_PASSWORD }}
-          DB_HOST: ${{ fromJson(secrets.TEST_ENVS).database.DB_HOST }}
-          DB_PORT: ${{ fromJson(secrets.TEST_ENVS).database.DB_PORT }}
-          JWT_SECRET: ${{ fromJson(secrets.TEST_ENVS).jwt.JWT_SECRET }}
-          JWT_EXPIRATION_TIME: ${{ fromJson(secrets.TEST_ENVS).jwt.JWT_EXPIRATION_TIME }}
-          JWT_REFRESH_SECRET: ${{ fromJson(secrets.TEST_ENVS).jwt.JWT_REFRESH_SECRET }}
-          JWT_REFRESH_EXPIRATION_TIME: ${{ fromJson(secrets.TEST_ENVS).jwt.JWT_REFRESH_EXPIRATION_TIME }}
-          REDIS_SESSION_PORT: 6379
-          REDIS_BLACKLIST_PORT: 6379
-          REDIS_BLACKLIST_HOST: localhost
-          REDIS_SESSION_HOST: localhost
-          REDIS_SESSION_DB: 0
-          REDIS_BLACKLIST_DB: 1
-          N: ${{ fromJson(secrets.TEST_ENVS).srp.N }}
-          g: ${{ fromJson(secrets.TEST_ENVS).srp.g }}
-          k: ${{ fromJson(secrets.TEST_ENVS).srp.k }}
-          SRP_N: ${{ secrets.SRP_N }}
-
-
-
-
-
-
-
-
-
-
-
+          POSTGRES_DB: ${{ fromJson(secrets.TEST_ENVS).POSTGRES_DB }}
+          POSTGRES_USER: ${{ fromJson(secrets.TEST_ENVS).POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ fromJson(secrets.TEST_ENVS).POSTGRES_PASSWORD }}
+          DB_HOST: ${{ fromJson(secrets.TEST_ENVS).DB_HOST }}
+          DB_PORT: ${{ fromJson(secrets.TEST_ENVS).DB_PORT }}
+          JWT_SECRET: ${{ fromJson(secrets.TEST_ENVS).JWT_SECRET }}
+          JWT_EXPIRATION_TIME: ${{ fromJson(secrets.TEST_ENVS).JWT_EXPIRATION_TIME }}
+          JWT_REFRESH_SECRET: ${{ fromJson(secrets.TEST_ENVS).JWT_REFRESH_SECRET }}
+          JWT_REFRESH_EXPIRATION_TIME: ${{ fromJson(secrets.TEST_ENVS).JWT_REFRESH_EXPIRATION_TIME }}
+          REDIS_SESSION_PORT: ${{ fromJson(secrets.TEST_ENVS).REDIS_SESSION_PORT }}
+          REDIS_BLACKLIST_PORT: ${{ fromJson(secrets.TEST_ENVS).REDIS_BLACKLIST_PORT }}
+          REDIS_BLACKLIST_HOST: ${{ fromJson(secrets.TEST_ENVS).REDIS_BLACKLIST_HOST }}
+          REDIS_SESSION_HOST: ${{ fromJson(secrets.TEST_ENVS).REDIS_SESSION_HOST }}
+          REDIS_SESSION_DB: ${{ fromJson(secrets.TEST_ENVS).REDIS_SESSION_DB }}
+          REDIS_BLACKLIST_DB: ${{ fromJson(secrets.TEST_ENVS).REDIS_BLACKLIST_DB }}
+          PORT: ${{ fromJson(secrets.TEST_ENVS).PORT }}
+          N: ${{ secrets.SRP_N }}
+          g: ${{ fromJson(secrets.TEST_ENVS).g }}
+          k: ${{ fromJson(secrets.TEST_ENVS).k }}
 

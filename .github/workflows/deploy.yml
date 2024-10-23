@@ -8,34 +8,53 @@ on:
         required: true
         default: 'production'
 
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18' 
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'yarn'
 
-    - name: Install dependencies
-      run: yarn install
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
 
-    - name: Build
-      run: yarn run build
+      - name: Build application
+        run: yarn build
 
-    - name: Authenticate to Google Cloud
-      uses: google-github-actions/auth@v1
-      with:
-        credentials_json: ${{ secrets.GCP_SA_KEY }}
+      - name: Generate app.yaml
+        run: envsubst < app.yaml.template > app.yaml
+        env:
+          POSTGRES_DB: ${{ fromJson(secrets.PROD_ENVS).POSTGRES_DB }}
+          POSTGRES_USER: ${{ fromJson(secrets.PROD_ENVS).POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ fromJson(secrets.PROD_ENVS).POSTGRES_PASSWORD }}
+          DB_HOST: ${{ fromJson(secrets.PROD_ENVS).DB_HOST }}
+          DB_PORT: ${{ fromJson(secrets.PROD_ENVS).DB_PORT }}
+          PORT: ${{ fromJson(secrets.PROD_ENVS).PORT }}
+          N: ${{ secrets.SRP_N }}
+          g: ${{ fromJson(secrets.PROD_ENVS).g }}
+          k: ${{ fromJson(secrets.PROD_ENVS).k }}
+          JWT_SECRET: ${{ fromJson(secrets.PROD_ENVS).JWT_SECRET }}
+          JWT_EXPIRATION_TIME: ${{ fromJson(secrets.PROD_ENVS).JWT_EXPIRATION_TIME }}
+          JWT_REFRESH_SECRET: ${{ fromJson(secrets.PROD_ENVS).JWT_REFRESH_SECRET }}
+          JWT_REFRESH_EXPIRATION_TIME: ${{ fromJson(secrets.PROD_ENVS).JWT_REFRESH_EXPIRATION_TIME }}
+          REDIS_SESSION_HOST: ${{ fromJson(secrets.PROD_ENVS).REDIS_SESSION_HOST }}
+          REDIS_SESSION_PORT: ${{ fromJson(secrets.PROD_ENVS).REDIS_SESSION_PORT }}
+          REDIS_SESSION_DB: ${{ fromJson(secrets.PROD_ENVS).REDIS_SESSION_DB }}
+          REDIS_BLACKLIST_HOST: ${{ fromJson(secrets.PROD_ENVS).REDIS_BLACKLIST_HOST }}
+          REDIS_BLACKLIST_PORT: ${{ fromJson(secrets.PROD_ENVS).REDIS_BLACKLIST_PORT }}
+          REDIS_BLACKLIST_DB: ${{ fromJson(secrets.PROD_ENVS).REDIS_BLACKLIST_DB }}
 
-    - name: Deploy to App Engine
-      uses: google-github-actions/deploy-appengine@v1
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
 
-      with:
-        project_id: ${{ secrets.GCP_PROJECT_ID }}
-        deliverables: app.yaml
-  
+      - name: Deploy to App Engine
+        run: gcloud app deploy app.yaml
