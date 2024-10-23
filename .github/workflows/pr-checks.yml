@@ -16,7 +16,7 @@ jobs:
           POSTGRES_USER: ${{ fromJson(secrets.TEST_ENVS).POSTGRES_USER }}
           POSTGRES_PASSWORD: ${{ fromJson(secrets.TEST_ENVS).POSTGRES_PASSWORD }}
         ports:
-          - ${{ fromJson(secrets.TEST_ENVS).DB_PORT }}:5432
+          - 5433:5432
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -26,7 +26,7 @@ jobs:
       redis:
         image: redis:latest
         ports:
-          - ${{ fromJson(secrets.TEST_ENVS).REDIS_SESSION_PORT }}:6379
+          - 6379:6379
         options: >-
           --health-cmd "redis-cli ping"
           --health-interval 10s
