@@ -14,10 +14,10 @@ jobs:
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'yarn'
@@ -52,9 +52,12 @@ jobs:
           REDIS_BLACKLIST_DB: ${{ fromJson(secrets.PROD_ENVS).REDIS_BLACKLIST_DB }}
 
       - name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v1
+        uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
       - name: Deploy to App Engine
-        run: gcloud app deploy app.yaml
+        uses: google-github-actions/deploy-appengine@v2
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          deliverables: app.yaml
