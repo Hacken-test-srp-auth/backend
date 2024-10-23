@@ -27,8 +27,6 @@ describe('Authentication (e2e)', () => {
   });
 
   it('should register a new user', async () => {
-    console.log('test is here, all is good!!!');
-
     const response = await request(app.getHttpServer())
       .post('/auth/register')
       .send({

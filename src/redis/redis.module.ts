@@ -10,33 +10,21 @@ export const REDIS_INVALID_TOKENS = 'REDIS_INVALID_TOKENS';
     {
       provide: REDIS_LOGIN_STORAGE,
       useFactory: () => {
-        const redisClient = new Redis({
+        return new Redis({
           host: process.env.REDIS_SESSION_HOST,
-          port: +process.env.REDIS_SESSION_PORT,
-          db: +process.env.REDIS_SESSION_DB,
+          port: Number(process.env.REDIS_SESSION_PORT),
+          db: Number(process.env.REDIS_SESSION_DB),
         });
-
-        redisClient.on('error', (err) => {
-          console.error('Redis Session Client error:', err);
-        });
-
-        return redisClient;
       },
     },
     {
       provide: REDIS_INVALID_TOKENS,
       useFactory: () => {
-        const redisClient = new Redis({
+        return new Redis({
           host: process.env.REDIS_BLACKLIST_HOST,
-          port: +process.env.REDIS_BLACKLIST_PORT,
-          db: +process.env.REDIS_BLACKLIST_DB,
+          port: Number(process.env.REDIS_BLACKLIST_PORT),
+          db: Number(process.env.REDIS_BLACKLIST_DB),
         });
-
-        redisClient.on('error', (err) => {
-          console.error('Redis Blacklist Client error:', err);
-        });
-
-        return redisClient;
       },
     },
   ],

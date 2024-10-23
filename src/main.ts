@@ -11,7 +11,10 @@ async function bootstrap() {
     credentials: true,
   });
 
-  console.log(`Application is running on port ==============================`);
+  console.log(
+    `Application is running on port ==============================`,
+    process.env.PORT,
+  );
 
   const port = process.env.PORT || 8080;
   await app.listen(port, '0.0.0.0');
