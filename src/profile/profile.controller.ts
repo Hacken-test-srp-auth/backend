@@ -1,11 +1,11 @@
 import {
   Controller,
   Get,
-  Put,
   Body,
   UseGuards,
   UseInterceptors,
   ClassSerializerInterceptor,
+  Patch,
 } from '@nestjs/common';
 
 import { UpdateProfileDto } from './dto/update-profile.dto';
@@ -26,7 +26,7 @@ export class ProfileController {
     return new ProfileDto(user);
   }
 
-  @Put()
+  @Patch()
   async updateProfile(
     @GetUserId() userId: string,
     @Body() updateProfileDto: UpdateProfileDto,
