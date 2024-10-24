@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { AppModule } from '../../src/app.module';
 import { DataSource } from 'typeorm';
 
@@ -9,6 +9,7 @@ export async function setupTestApp(): Promise<INestApplication> {
   }).compile();
 
   const app = moduleFixture.createNestApplication();
+  app.useGlobalPipes(new ValidationPipe());
   await app.init();
 
   await runMigrations(app);
