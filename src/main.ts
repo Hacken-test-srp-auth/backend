@@ -9,7 +9,7 @@ async function bootstrap() {
 
   app.enableCors({
     exposedHeaders: ['Content-Disposition'],
-    origin: '*',
+    origin: process.env.CLIENT_URL,
     credentials: true,
   });
 

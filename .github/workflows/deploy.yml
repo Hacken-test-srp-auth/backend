@@ -50,6 +50,7 @@ jobs:
           REDIS_BLACKLIST_HOST: ${{ fromJson(secrets.PROD_ENVS).REDIS_BLACKLIST_HOST }}
           REDIS_BLACKLIST_PORT: ${{ fromJson(secrets.PROD_ENVS).REDIS_BLACKLIST_PORT }}
           REDIS_BLACKLIST_DB: ${{ fromJson(secrets.PROD_ENVS).REDIS_BLACKLIST_DB }}
+          CLIENT_URL: ${{ secrets.CLIENT_URL }}
 
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
